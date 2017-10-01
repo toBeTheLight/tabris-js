@@ -1,28 +1,28 @@
 ---
 ---
-# Building a Tabris.js App
+# 构建一个 Tabris.js 应用
 
-Tabris.js utilizes [Apache Cordova](http://cordova.apache.org) to build and package apps. Apps can be built without any local setup [using the free online build service](#build-service) on tabrisjs.com. To [build an app on your local machine](#local-build), you need to setup developer tools like Xcode, Visual Studio or the Android SDK. The following features are supported by the two different build types.
+Tabris.js 利用[Apache Cordova](http://cordova.apache.org)来构建和打包应用。在tabrisjs.com [使用免费在线的构建服务](#build-service)，可以帮你不进行任何本地安装的构建应用。想要[在你自己的本机上构建应用](#local-build)，你需要安装像Xcode，Visual Studio或者Android SDK此类的开发者工具。这两种不同的构建方式支持如下不同的特性。
 
-|                           | Build Service | Local Build |
+|                           | 构建服务 | 本机构建 |
 | :------------------------ |:---------------:| :---------------: |
-| Building iOS Apps         |       ✓         |       ✓      |
-| Building Android Apps     |       ✓         |       ✓      |
-| Building Windows Apps     |       ✓         |       ✓      |
-| [Integrate Cordova Plugins](cordova.md)     |       ✓      |       ✓      |
-| [Cordova Build Hooks](http://cordova.apache.org/docs/en/edge/guide_appdev_hooks_index.md.html#Hooks%20Guide)       |       ✓      |       ✓      |
-| Custom Project Structure  |       ✓      |       ✓      |
-| Own Build Scripts         |              |       ✓      |
-| Using own build hardware  |              |       ✓      |
-| Other SCMs than Git       |              |       ✓      |
+| 构建 iOS 应用         |       ✓         |       ✓      |
+| 构建 Android 应用     |       ✓         |       ✓      |
+| 构建 Windows 应用     |       ✓         |       ✓      |
+| [集成 Cordova 插件](cordova.md)     |       ✓      |       ✓      |
+| [Cordova 构建钩子（Hooks）](http://cordova.apache.org/docs/en/edge/guide_appdev_hooks_index.md.html#Hooks%20Guide)       |       ✓      |       ✓      |
+| 自定义项目结构  |       ✓      |       ✓      |
+| 自定义构建脚本         |              |       ✓      |
+| 使用自己的构建硬件  |              |       ✓      |
+| 除了Git的管理系统       |              |       ✓      |
 
-> :point_right: The online build service is free for unlimited public GitHub repositories and 1 private repository. To build from unlimited private repositories, you need a [Pro account](https://tabrisjs.com/pricing/). [Local builds](#local-build) are free for everyone.
+> :point_right: 线上构建服务对无限制的公共 Github 库和一个私有库是免费的。为了从无限制的私有库构建应用，你需要一个[Pro 通行证](https://tabrisjs.com/pricing/)。[Local builds](#local-build)对每个人都是免费的。
 
-> :point_right: When building Windows apps, please also read the [Windows Support Documentation](windows-support.md) on the topic.
+> :point_right: 构建 Windows 应用时，请阅读相关[Windows 支持文档](windows-support.md)。
 
-## Project Layout
+## 项目结构
 
-To prepare your project for the build, you have to create a subdirectory named `cordova` that contains the build configuration. The layout of a Tabris.js project might look like this:
+构建的准备工作，你需要创建一个叫`cordova`的子目录，其包含有构建配置。一个Tabris.js项目的结构看起来可能像这样：
 ```
 /
 |- cordova/
@@ -35,11 +35,11 @@ To prepare your project for the build, you have to create a subdirectory named `
 |- .tabrisignore
 ```
 
-### The package.json file
+### package.json 文件
 
-See [package.json | npm documentation](https://docs.npmjs.com/files/package.json) for information about the package.json format.
+查阅 [package.json | npm documentation](https://docs.npmjs.com/files/package.json) 获取关于`package.json`文件格式的更多信息。
 
-`package.json` contains, among other configurations, references to the app's main script and npm module dependencies:
+`package.json` 包含除了一些其他配置在内的应用的主脚本和npm包依赖。
 
 ```json
 {
@@ -54,11 +54,11 @@ See [package.json | npm documentation](https://docs.npmjs.com/files/package.json
 }
 ```
 
-Dependencies are automatically installed during the build process.
+构建过程中依赖会被自动安装。
 
-#### Build scripts
+#### 构建脚本
 
-When a Tabris.js app is built, `build` scripts given in the `package.json` are executed before the JavaScript code is bundled into the app. They can be used to transpile the JavaScript app code.
+Tabris.js应用构建时，`package.json`中的`build`脚本会在JavaScript代码被打包进应用前被执行。他们可以被用来转义（transpile）JavaScript应用代码。
 
 ```json
 {
@@ -70,35 +70,33 @@ When a Tabris.js app is built, `build` scripts given in the `package.json` are e
   ...
 }
 ```
+支持的构建钩子有：
 
-Supported build script hooks are:
+  - `"build"`: 运行所有平台构建
+  - `"build:android"`: 运行Android构建
+  - `"build:ios"`: 运行iOS构建
+  - `"build:windows"`: 运行Windows构建
 
-  - `"build"`: executed for all platform builds
-  - `"build:android"`: executed for Android builds
-  - `"build:ios"`: executed for iOS builds
-  - `"build:windows"`: executed for Windows builds
+在执行`tabris serve`前（本机运行时）请确保已经运行了`build`脚本。在使用转译器（transpiler）的监测模式（watch mode）时这一步会被自动执行，监测模式会自动编译变动的文件（您的转译器的文件）。像[npm-run-all](https://www.npmjs.com/package/npm-run-all)这样的模块能帮你运行监测模式的同时运行`tabris serve`。
 
-Make sure the `"build"` script is executed before executing `tabris serve` (when running the app locally). This step can be automated by using the watch mode of your transpiler, which will compile the file on change (refer to your transpiler's documentation). A module like [npm-run-all](https://www.npmjs.com/package/npm-run-all) can help run the transpiler in watch mode and `tabris serve` at the same time.
+对于更大型的项目，你可能需要使用像[rollup.js](https://rollupjs.org)这样的模块打包工具。它会消除多模块加载的系统开箱并且使用静态分析来移除打包产出中的无用代码。
 
-For bigger projects you may want to use a module bundler like [rollup.js](https://rollupjs.org). It removes the overhead of loading multiple modules and uses static analysis to remove unused code from the bundled artifact.
+#### 示例: 转译 ES6 代码
 
-#### Example: Transpiling ES6 code
-
-Install the Babel transpiler and the necessary plug-ins. The `--save-dev` option will add the dependencies to your `package.json`:
+安装Babel转译器和必要的插件。`--save-dev`配置会将依赖项添加到你的`package.json`中
 
 ```
 npm install --save-dev babel-cli babel-plugin-transform-es2015-modules-commonjs
 ```
 
-Create a `.babelrc` file in the root of your project:
+在你项目的跟路径下创建一个`.babelrc`文件
 
 ```json
 {
   "plugins": ["transform-es2015-modules-commonjs"]
 }
 ```
-
-Include the following build script in the `scripts` sections of your `package.json`:
+在你的`package.json`中的`scripts`部分添加如下构建脚本：
 
 ```json
 {
@@ -108,8 +106,7 @@ Include the following build script in the `scripts` sections of your `package.js
   ...
 }
 ```
-
-Let the `main` field point to the *transpiled* `app.js` in `dist/`:
+让`main`字段指向`dist/`下转译好的`app.js`文件
 
 ```json
 {
@@ -118,18 +115,18 @@ Let the `main` field point to the *transpiled* `app.js` in `dist/`:
 }
 ```
 
-In case iOS 9 support is desired, more Babel plugins can be added to compensate for missing ES6 features.
-See [EcmaScript 6](lang.md#ecmascript-6) for more information about supported ES6 features in iOS 9.
+考虑iOS9的支持，你需要安装额外的Babel插件来支持缺失的ES6特性。
+查阅[EcmaScript 6](lang.md#ecmascript-6)获取有关iOS9中支持ES6特性的更多信息。
 
-#### Example: Transpiling TypeScript code
+#### Example: 转译 TypeScript 代码
 
-Install the TypeScript compiler:
+安装 TypeScript 编译器:
 
 ```
 npm install --save-dev typescript
 ```
 
-Include the following build script in the `scripts` sections of your `package.json`:
+在你的`package.json`中的`scripts`部分添加如下构建脚本：
 
 ```json
 {
@@ -139,8 +136,7 @@ Include the following build script in the `scripts` sections of your `package.js
   ...
 }
 ```
-
-Let the `main` field point to the *transpiled* `app.js` in `dist/`:
+让`main`字段指向`dist/`下转译好的`app.js`文件
 
 ```json
 {
@@ -149,9 +145,9 @@ Let the `main` field point to the *transpiled* `app.js` in `dist/`:
 }
 ```
 
-### The config.xml file
+### config.xml 文件
 
-The minimal build configuration you need is a `cordova/config.xml` file that describes your app. It contains information like the id of your app, its version, icons and splash screens. The format of the `config.xml` is the same as a standard [Cordova config.xml](https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File) file. A minimal example config could look like this:
+你所需的最简单的构建配置是一个描述应用的`cordova/config.xml`文件。包含像应用id、版本、图标、启动画面此类信息。`config.xml`的格式和标准[Cordova config.xml](https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File)文件相同。最简单的示例配置看起来像这样：
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
@@ -166,53 +162,53 @@ The minimal build configuration you need is a `cordova/config.xml` file that des
 </widget>
 ```
 
-#### Integrating Cordova plugins
+#### 集成 Cordova 插件
 
-To add a set of Apache Cordova plug-ins you only need to add them to `config.xml` using the `<plugin />` tag. It allows you to add plug-ins using an ID, an HTTP URL or a git URL.
+你只需要向`config.xml`中插入`<plugin />`标签就能添加一套`Apache Cordova`插件。允许你使用ID、HTTP URL或git URL的方式添加插件。
 
-For example, to add the [Cordova Camera Plugin](http://plugins.cordova.io/#/package/org.apache.cordova.camera), you'd add this line:
+举个栗子，为了添加[Cordova Camera 插件](http://plugins.cordova.io/#/package/org.apache.cordova.camera)，你需要添加这一行：
 
 ```xml
 <plugin name="cordova-plugin-camera" spec="^2.3.0" />
 ```
 
-You can integrate all available [Cordova Plugins](http://plugins.cordova.io/#/) by including them in your `config.xml`.
+使用将其添加进`config.xml`的方式你可以集成所有可用的[Cordova 插件](http://plugins.cordova.io/#/)。
 
-**Important:** You can install all available Cordova Plugins. Most of the Plugins will work out of the box. However, since Tabris.js uses a **native UI** and **no HTML5**, plugins that rely on an HTML5 UI (i.e. the DOM) won't work.
+**Important:** 你可以安装所有可用的Cordova插件。大部分插件开箱即用。然而，由于Tabris.js使用了**native UI** 和 **no HTML5**，基于HTML5 UI (即DOM)的插件都会无效（Tabris.js是无dom的）。
 
 
-#### The content element
+#### content 元素
 
-The optional `<content>` element defines the app's starting page in ordinary Cordova apps. In Tabris.js you can use it to define an alternative location of the `package.json` file. Example:
+可选的`<content>`元素在传统的Cordova应用中定义了应用的起始页。在Tabris.js中你可以用`package.json`文件的路径位置来替代。示例：
 
 ```xml
 <content src="mySubFolder/package.json" />
 ```
 
-#### Preferences
+#### 首选项
 
-In addition to the settings described in the [Cordova config.xml Guide](http://cordova.apache.org/docs/en/dev/config_ref/), Tabris.js also accepts the following custom preferences:
+除了[Cordova config.xml Guide](http://cordova.apache.org/docs/en/dev/config_ref/)中提到的设置，Tabris.js还接受以下自定义首选项：
 
-| Name                   | Allowed Values | Default Value | Description |
+| 名称                   | 允许值 | 默认值 | 描述 |
 |------------------------|----------------|---------------|-------------|
-| EnableDeveloperConsole | true/false     | false         | Enables/Disables the [Tabris.js Developer Console](getting-started.md#the-developer-console). Setting the value to `$IS_DEBUG` will make the value follow the value for [debug mode](#settings)|
-| UseStrictSSL           | true/false     | true          | Activate/Deactivate SSL certificate validation on [XHR](w3c-api.md#xmlhttprequest). When disabled self signed SSL certificates are accepted. Should be enabled in production. |
+| EnableDeveloperConsole | true/false     | false         | 启用/禁用[Tabris.js Developer Console](getting-started.md#the-developer-console)。将值设置为`$IS_DEBUG`会使其与[debug mode](#settings)的值同步|
+| UseStrictSSL           | true/false     | true          | 激活/停用[XHR](w3c-api.md#xmlhttprequest)的SSL证书验证。禁用时，自签名SSL证书被允许。生产环境是应启用。 |
 
-Example:
+示例:
 ```xml
 <preference name="EnableDeveloperConsole" value="true" />
 ```
 
-#### Android specific preferences
+#### Android 特定首选项
 
-| Name                    | Value |
+| 名称                    | 值 |
 |-------------------------|-------|
-| Theme                   | <ul><li>`@style/Theme.Tabris`</li><li>`@style/Theme.Tabris.Light`</li><li>`@style/Theme.Tabris.Light.DarkAppBar` (Default)</ul>In addition to the bundled Tabris themes, a resource reference to a custom Android theme can be specified. Custom themes have to inherit from one of the Tabris base themes.<br/><br/>Example: `<preference name="Theme" value="@style/Theme.MyAppTheme" />` |
-| ThemeSplash             | <ul><li>`@style/Theme.Tabris.SplashScreen`</li><li>`@style/Theme.Tabris.Light.SplashScreen` (Default)</ul>The splash screen is shown to the user while the app is starting up. By default this screen has a white background. The `ThemeSplash` preference allows to set one of the bundled themes or to provide a custom theme.<br/><br/>Example: `<preference name="ThemeSplash" value="@style/Theme.Tabris.SplashScreen" />`<br/><br/>Note that the `config.xml` element `<splash .. />` can be used to set an image on the splash screen. For styling guides see the material design guidelines on [launch screens](https://material.google.com/patterns/launch-screens.html). |
+| Theme                   | <ul><li>`@style/Theme.Tabris`</li><li>`@style/Theme.Tabris.Light`</li><li>`@style/Theme.Tabris.Light.DarkAppBar` (Default)</ul>除了捆绑的Tabris主题，还可以制定自定义的Android主题的引用。自定义主题需要继承自Tabris基础主题。<br/><br/>示例: `<preference name="Theme" value="@style/Theme.MyAppTheme" />` |
+| ThemeSplash             | <ul><li>`@style/Theme.Tabris.SplashScreen`</li><li>`@style/Theme.Tabris.Light.SplashScreen` (默认)</ul>启动画面会在应用启动时展示给用户。磨人的画面是一个白屏。`ThemeSplash`首选项允许设置一个捆绑的主题或提供一个自定义主题。<br/><br/>示例: `<preference name="ThemeSplash" value="@style/Theme.Tabris.SplashScreen" />`<br/><br/>注意，`config.xml` 元素 `<splash .. />` 可以用来给启动画面设置图像。查阅[launch screens](https://material.google.com/patterns/launch-screens.html)的`material design`指南获取样式设计指导。 |
 
-#### Windows specific preferences
+#### Windows 特定首选项
 
-Windows apps always have a splash screen. If you do not configure one, the default Tabris.js splash screen is used. To configure your own splash screen, you have to give a logo in three different resolutions and the background color. The naming of the files has to match those given here:
+Windows 应用通常都一个启动画面。如果不配置，会使用默认的Tabris.js启动画面。自定义启动画面时，你需要提供三种不同分辨率和背景色下的logo。文件名需个如下名称对应：
 
 ```xml
 <platform name="windows">
@@ -223,7 +219,7 @@ Windows apps always have a splash screen. If you do not configure one, the defau
 </platform>
 ```
 
-To replace the tabris logo on the launcher tile, Windows store and task icon you also have to give all of the following files. Again, naming is relevant:
+替换启动器标题、Windows商城和任务图标中的tabris标志，你需要提供如下所有文件。同样的，名称也需要对应。
 
 ```xml
 <platform name="windows">
@@ -237,26 +233,26 @@ To replace the tabris logo on the launcher tile, Windows store and task icon you
 </platform>
 ```
 
-### The .tabrisignore file
+### .tabrisignore 文件
 
-The tabris.js build packages the contents of your project into the app. You can exclude certain files or directories that are not required in the packaged app, such as tests or developer documentation. Files and directories to be ignored by the build can be listed in a file named `.tabrisignore`. The format of this ignore file follows the same rules as a [`.gitignore`](http://git-scm.com/docs/gitignore) file.
+tabris.js将项目的内容打包进应用中。你可以排除打包应用程序中不需要的某些文件或目录，例如测试或开发人员文档。要被构建忽略的文件和目录可以列在名为`.tabrisignore`的文件中。这个忽略文件的格式与[`.gitignore`](http://git-scm.com/docs/gitignore)文件遵从相同的规则。
 
-The following folders are excluded by default and don't have to be listed in the `.tabrisignore`:
+如下的文件不列入`.tabrisignore`中也会被默认排除：
 
 * `.git/`
 * `node_modules/`
 * `build/`
 * The file `.tabrisignore` itself
 
-## Build Service
+## 构建服务
 
-[Tabrisjs.com](https://tabrisjs.com) offers a free online build service for Tabris.js apps. After signing in you can create an app in the "My Apps" section by clicking "Create App". Now you can select your GitHub repository in the list of repositories (if it’s not visible you may need to press the "synchronize" button). Users on the [Pro plan](https://tabrisjs.com/pricing/) can also use self hosted Git repositories.
+[Tabrisjs.com](https://tabrisjs.com) 为Tabris.js应用提供免费的在线构建服务。在登录后，你可以在“My Apps”部分点击“Create App”来创建一个应用。现在你可以从库列表（如果不可见，你需要按“synchronize/同步”按钮）中选取你的GitHub库。[Pro 计划](https://tabrisjs.com/pricing/)中的用户也可以使用自己的Git库。
 ![Create an App](img/build-create-app.png)
-After you have selected your repository it’s going to be validated. The validation checks if the selected repository contains a valid Tabris.js [project layout](build.md#project-layout). If you have a valid project structure and `config.xml`, your app should become valid shortly. If it’s invalid, the site will tell you what went wrong. In this case please follow the instructions displayed.
+选择库之后，将会启动一个验证，此验证会监测选中的库是否含有一个合法的Tabris.js[项目结构](build.md#project-layout)。如果你有一个合法的项目结构和`config.xml`，你的应用很快就会通过验证。如果不合法，此网站会提示你哪里出错。这种情况下，请跟随显示说明。
 ![Valid App](img/build-valid-app.png)
-After your app has become valid, you are ready to execute the first build. Just select the newly created app and click the "Start Android Build" button. A few minutes later you will get an Android .apk file which is ready to be installed on your device. But what about iOS, production builds and signing? All these things can be configured using the "Settings".
+在你的应用合法后，你已经可以进行第一次构建。只需选中新创建的应用然后点击"Start Android Build"按钮。几分钟后，你会得到一个可以在你设备上安装的Andriod .apk文件。但是iOS、生产构建和签名呢？所有的这些都可以使用“Settings”进行设置。
 
-> :point_right: The build service installs the dependencies specified in your package.json from npm (except devDependencies). As a result, you don't have to put the `node_modules` folder under version control.
+> :point_right: 构建服务会从npm安装你的`package.json`中的依赖项（）。The build service installs the dependencies specified in your package.json from npm (devDependencies除外)。所以，你不需要将`node_modules`文件放入版本控制中。
 
 ### Settings
 
