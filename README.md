@@ -1,3 +1,7 @@
+# About
+
+文档中文翻译进行中
+
 # Tabris.js
 
 [![Build Status](https://travis-ci.org/eclipsesource/tabris-js.svg?branch=master)](https://travis-ci.org/eclipsesource/tabris-js)
