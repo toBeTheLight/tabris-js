@@ -258,46 +258,45 @@ tabris.js将项目的内容打包进应用中。你可以排除打包应用程�
 
 ![App Settings](img/build-app-settings.png)
 
-* **Repository URL:** This is the URL of your git repository. If you're using the free build, it should point to a GitHub repository. Users who are on the [Pro plan](https://tabrisjs.com/pricing/) can also use custom repository locations.
-* **SSH Private Key:** A SSH private key to access your repository. Only relevant for git repositories which are not hosted on GitHub.
-* **Branch:** The git branch to build from. The default value is `master`. If you want to build from a feature branch, you may specify the branch here.
-* **App Directory:** The directory within your repository that contains your Tabris.js app. The value must be relative to the repository root.
-* **iOS Signing Key:** iOS apps can not be deployed to a mobile device without being signed. If you want to build an iOS app you need an Apple Developer account and provide the certificate together with the provisioning profile. A very good tutorial on how to get these files can be found in the [Phonegap Build documentation](http://docs.build.phonegap.com/en_US/signing_signing-ios.md.html#iOS%20Signing).
-* **Android Signing Key:** Android apps need to be signed with a certificate only if you want to deploy them to Play Store. You can find a very good tutorial in the [Phonegap Build documentation](http://docs.phonegap.com/phonegap-build/signing/android/) as well.
-* **Windows Architecure** Choose which CPU architecture you want to build your package for.
-* **Environment Variables:** Key/Value pairs that will be stored and transferred encrypted to the build machines. They can be used within the config.xml or custom hooks. Use cases are adding plug-ins from private git repositories or handling access keys.
-* **Builds to keep:** Specifies the number of builds that should be kept before deleting them automatically.
-* **Tabris.js Version:** The Tabris.js *client* version to use in the app. In contrast to the "tabris" dependency to your `package.json` which defines the version of the JavaScript module, this setting defines the version of the native client that will interpret your JavaScript code. In most cases, the value `latest` is good enough here. But if you want to stick to a fixed Tabris.js version you can configure it here.
-* **Debug:** Enables the *debug mode*. If set to `ON`, your app will be built including debug symbols and it will be packaged into the Tabris.js Developer App to make development easier. This allows you to use all the benefits like the developer console or the reload also with your own app. Please be aware that debug versions can not be submitted to the app stores. Debug `OFF` means your app will be built to be ready for release: no Developer App, no console, no reload. Only your JavaScript code is executed.
+* **Repository URL（库地址）:** 这是你的git库的地址。如果你正在使用免费的构建服务，这个地址应该指向一个GitHub库。[Pro 计划](https://tabrisjs.com/pricing/)的用户也可以使用自定义的库地址。
+* **SSH Private Key（SSH私钥）:** 访问你的库的SSH私钥。仅与GitHub不托管的git库相关。
+* **Branch（分支）:** 从哪个git的分支开始构建。默认为`master`分支。如果你想要从一个特性分支开始构建，你可以在此指定。
+* **App Directory（应用目录）:** 库中包含你的Tabris.js应用的文件目录。这个值必须相对于库的根目录。
+* **iOS Signing Key（iOS签名）:** iOS应用在没有签名的情况下不能被部署到移动设备。如果你想要构建一个iOS应用，你需要一个Apple开发者账户，并且需要将证书和配置文件一起提供。[Phonegap Build documentation](http://docs.build.phonegap.com/en_US/signing_signing-ios.md.html#iOS%20Signing)提供了如何获取这些文件的教程。
+* **Android Signing Key（Android签名）:** Android应用只有当你想将其发布到Play商城时才需要签名。你可以在[Phonegap Build documentation](http://docs.phonegap.com/phonegap-build/signing/android/)找到一个很好的教程。
+* **Windows Architecure（Windows架构）** 选择你想要构建你的应用的CPU架构。
+* **Environment Variables:** 将会被存储和传输加密到构建机器的键值对。Key/Value pairs that will be stored and transferred encrypted to the build machines. 可以在config.xml或自定义钩子中使用。They can be used within the config.xml or custom hooks. 从私有git库添加插件或者处理访问密钥时会用到。
+* **Builds to keep（保留的构建数）:** 指定超过多少构建数时触发自动删除。
+* **Tabris.js Version（Tabris.js版本）:** 应用中使用的Tabris.js客户端版本。与定义JavaScript模块的`package.json`文件中的“tabris”依赖相反，这个设置定义了本地客户端中用来翻译你的JavaScript代码的Tabris.js版本。大部分情况下，设置为`latest`就够了。但是如果你想要坚持固定的版本，你可以在这里配置他。
+* **Debug（调试）:** 允许*调试模式*。如果设置为`ON`，你的应用将会把调试标志构建在内，它将会被打包进Tabris.js开发者应用，使开发变得更容易些。这可以使你自己的app也享有所有的例如开发者控制台、重加载在内的所有好处。注意，调试版本不能提交到应用商城。设置为`OFF`意味着你的应用准备好发布了：没有开发者应用，没有控制台，没有重载功能。只有你自己的JavaScript代码可以被执行。
 
-## Local Build
+## 本机构建
 
-You can build Tabris.js apps on your local machine using the [Tabris CLI](https://www.npmjs.com/package/tabris-cli).
+使用
+[Tabris CLI](https://www.npmjs.com/package/tabris-cli)，你可以在你自己的机器上构建Tabris.js应用。
 
-### Prerequisites
+### 先决条件
 
-To build apps on your machine, the development environment for the target platform must be installed.
-If you're targeting iOS, you need macOS with a recent version of Xcode.
-For Windows, you need a Windows PC with Visual Studio 2017.
-Android apps can be build on any OS with the latest Android SDK installed.
+本机构建应用时，必须安装目标平台的开发环境。
+如果你的目标平台是iOS，你需要带有最新版本的Xcode的macOS。如果是Windows，你需要一台装有Visual Studio 2017的Windows主机。
+Android应用可以在任意带有最新版本Android SDK的系统构建。
 
-The Tabris CLI must be installed globally on your system:
+Tabris CLI需要全局安装在你的系统上：
 
 ```
 npm install -g tabris-cli
 ```
 
-You also need an account on [tabrisjs.com](https://tabrisjs.com). A free account is sufficient.
+你还需要一个[tabrisjs.com](https://tabrisjs.com)的账户。免费账户就够了。
 
-### Building an App
+### 构建一个应用
 
-On the first start, the Tabris CLI will ask for a build key.
-You can find this key on your [profile page](https://tabrisjs.com/settings/account).
+第一次启动，Tabris CLI会询问一个构建密钥。你可以在你的[个人资料页](https://tabrisjs.com/settings/account)找到它。
 
-To build your app, run
+开始运行你的应用构建吧
 
 ```
 tabris build [android|ios|windows]
 ```
 
-For more command-line options, please refer to the [CLI documentation](https://www.npmjs.com/package/tabris-cli).
+请查阅[CLI documentation](https://www.npmjs.com/package/tabris-cli)获取更多命令行选项。
